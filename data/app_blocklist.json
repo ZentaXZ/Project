@@ -1,1 +1,7 @@
-{"apps":[]}
+{
+	"apps":	[{
+			"process_name":	"discord.exe",
+			"allowed_from":	"18:00",
+			"allowed_to":	"20:00"
+		}]
+}

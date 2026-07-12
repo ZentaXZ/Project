@@ -4,5 +4,15 @@
 			"title":	"Tarea de prueba UI",
 			"description":	"",
 			"completed":	true
+		}, {
+			"id":	"6a53bbe4-0000-0001-516d-000007760ab3",
+			"title":	"hhgfy",
+			"description":	"",
+			"completed":	true
+		}, {
+			"id":	"6a53bee4-0000-0001-062f-0000592e3cea",
+			"title":	"Test reward",
+			"description":	"",
+			"completed":	true
 		}]
 }

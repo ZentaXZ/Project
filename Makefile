@@ -3,7 +3,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -g $(shell pkg-config --cflags gtk4)
-LDFLAGS = $(shell pkg-config --libs gtk4) -lpsapi -luser32 -lkernel32
+LDFLAGS = $(shell pkg-config --libs gtk4) -lpsapi -luser32 -lkernel32 -lwinmm
 
 TARGET = gestor-tareas.exe
 
