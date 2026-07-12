@@ -27,3 +27,5 @@ main.exe
 # Local data (user sessions)
 data/tasks.json.bak
 data/stats.json.bak
+
+# NOTE: third_party/ is NOT ignored - cJSON source is versioned as part of the project
