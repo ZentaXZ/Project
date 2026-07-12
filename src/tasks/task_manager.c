@@ -1,10 +1,10 @@
 #include "task_manager.h"
 #include "task_storage.h"
+#include "../utils/id_utils.h"
 #include "../utils/time_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <uuid/uuid.h> // TODO: May need to add UUID library or generate UUIDs differently on Windows
 
 static Task* g_tasks = NULL;
 static int g_task_count = 0;
@@ -20,7 +20,6 @@ bool task_manager_init(void) {
 Task* task_manager_create(const char* title, const char* description, Priority priority) {
     if (!title) return NULL;
 
-    // TODO: Generate UUID
     Task* new_tasks = realloc(g_tasks, sizeof(Task) * (g_task_count + 1));
     if (!new_tasks) return NULL;
 
@@ -28,6 +27,7 @@ Task* task_manager_create(const char* title, const char* description, Priority p
     Task* new_task = &g_tasks[g_task_count];
     memset(new_task, 0, sizeof(Task));
 
+    generate_uuid(new_task->id);
     strncpy(new_task->title, title, 127);
     strncpy(new_task->description, description ? description : "", 511);
     new_task->priority = priority;
@@ -84,7 +84,7 @@ bool task_manager_add_subtask(const char* task_id, const char* subtask_title) {
             if (g_tasks[i].subtask_count >= 10) return false;
 
             Subtask* new_subtask = &g_tasks[i].subtasks[g_tasks[i].subtask_count];
-            // TODO: Generate UUID
+            generate_uuid(new_subtask->id);
             strncpy(new_subtask->title, subtask_title, 127);
             new_subtask->done = false;
             g_tasks[i].subtask_count++;
@@ -122,7 +122,7 @@ bool daily_task_manager_create(const char* title, RecurrenceType recurrence, int
     DailyTask* new_task = &g_daily_tasks[g_daily_count];
     memset(new_task, 0, sizeof(DailyTask));
 
-    // TODO: Generate UUID
+    generate_uuid(new_task->id);
     strncpy(new_task->title, title, 127);
     new_task->recurrence = recurrence;
     new_task->recurrence_value = recurrence_value;

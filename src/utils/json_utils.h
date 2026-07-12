@@ -1,7 +1,8 @@
 #ifndef JSON_UTILS_H
 #define JSON_UTILS_H
 
-#include "../../../third_party/cJSON/cJSON.h"
+#include <stdbool.h>
+#include "../../third_party/cJSON/cJSON.h"
 
 /**
  * Load JSON from a file.
