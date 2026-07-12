@@ -1,0 +1,29 @@
+# Build artifacts
+*.o
+*.a
+*.so
+*.exe
+*.dll
+*.dylib
+build/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Compiled output
+main
+main.exe
+*.out
+
+# Local data (user sessions)
+data/tasks.json.bak
+data/stats.json.bak
