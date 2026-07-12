@@ -1,25 +1,47 @@
-# Makefile for Prompt Maestro - Gestor de Tareas y Productividad
-# MinGW-w64 on Windows with GTK3
-
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -g $(shell pkg-config --cflags gtk+-3.0)
-LDFLAGS = $(shell pkg-config --libs gtk+-3.0) -lpsapi -luser32 -lkernel32
+PKG_CONFIG = pkg-config
+CFLAGS = -Wall -Wextra -std=c11 $(shell $(PKG_CONFIG) --cflags gtk4)
+LDFLAGS = $(shell $(PKG_CONFIG) --libs gtk4) -lpsapi -luser32 -lkernel32
 
+# Source files (list explicitly to handle recursive wildcards on Windows)
+SRC = src/main.c \
+      src/utils/json_utils.c \
+      src/utils/time_utils.c \
+      src/utils/uuid_utils.c \
+      src/tasks/task_manager.c \
+      src/tasks/task_storage.c \
+      src/stats/stats.c \
+      src/ui/ui_main.c \
+      src/ui/ui_tasks.c \
+      src/ui/ui_completed.c \
+      src/ui/ui_stats.c \
+      src/ui/ui_settings.c \
+      src/control/process_monitor.c \
+      src/control/app_blocker.c \
+      src/control/schedule.c \
+      src/control/reward_timer.c \
+      src/control/focus_mode.c \
+      src/control/soft_punishment.c \
+      src/notifications/notify.c \
+      third_party/cJSON/cJSON.c
+
+OBJ = $(SRC:.c=.o)
 TARGET = gestor-tareas.exe
-SOURCES = $(wildcard src/**/*.c) $(wildcard src/*.c) third_party/cJSON/cJSON.c
-OBJECTS = $(SOURCES:.c=.o)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+$(TARGET): $(OBJ)
+	@echo "Linking $@..."
+	$(CC) $(OBJ) -o $(TARGET) $(LDFLAGS)
 	@echo "✓ Build successful: $(TARGET)"
 
 %.o: %.c
+	@echo "Compiling $<..."
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	@echo "Cleaning..."
+	rm -f $(OBJ) $(TARGET)
 	@echo "✓ Clean complete"
 
 run: $(TARGET)
