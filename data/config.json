@@ -1,1 +1,9 @@
-{"reward_minutes_per_task":15,"theme":"light","sound_enabled":true,"punishment_multiplier":0.5}
+{
+	"reward_minutes_per_task": 1,
+	"theme": "light",
+	"sound_enabled": true,
+	"punishment_multiplier": 0.5,
+	"watchdog_enabled": true,
+	"close_guard_enabled": true,
+	"stayfree_exe_path": "C:\\Program Files\\WindowsApps\\37081StayFreeApps.StayFree3_3.4.2.0_x64__fqhk48m1tsma0\\app\\StayFree.exe"
+}

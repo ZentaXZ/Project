@@ -164,6 +164,30 @@ bool schedule_add_rule(const char* process_name, int from_minutes, int to_minute
     return true;
 }
 
+bool schedule_remove_blocklist_rule(int index) {
+    if (index < 0 || index >= g_blocklist_count) {
+        return false;
+    }
+
+    for (int i = index; i < g_blocklist_count - 1; i++) {
+        g_blocklist[i] = g_blocklist[i + 1];
+    }
+    g_blocklist_count--;
+    return true;
+}
+
+bool schedule_remove_whitelist_rule(int index) {
+    if (index < 0 || index >= g_whitelist_count) {
+        return false;
+    }
+
+    for (int i = index; i < g_whitelist_count - 1; i++) {
+        g_whitelist[i] = g_whitelist[i + 1];
+    }
+    g_whitelist_count--;
+    return true;
+}
+
 bool schedule_save(void) {
     bool block_ok = schedule_save_file("data/app_blocklist.json", g_blocklist, g_blocklist_count);
     bool white_ok = schedule_save_file("data/app_whitelist.json", g_whitelist, g_whitelist_count);

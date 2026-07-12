@@ -13,6 +13,8 @@ typedef struct {
 bool schedule_load(void);
 bool schedule_is_allowed_now(const char* process_name);
 bool schedule_add_rule(const char* process_name, int from_minutes, int to_minutes);
+bool schedule_remove_blocklist_rule(int index);
+bool schedule_remove_whitelist_rule(int index);
 bool schedule_save(void);
 
 int  schedule_get_blocklist_count(void);

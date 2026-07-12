@@ -29,4 +29,9 @@ bool task_storage_save_daily(DailyTask* tasks, int count);
  */
 bool task_storage_append_completed(const char* task_id, const char* task_title, const char* type);
 
+/**
+ * Remove a completed task entry by id from data/completed_tasks.json
+ */
+bool task_storage_remove_completed(const char* task_id);
+
 #endif // TASK_STORAGE_H

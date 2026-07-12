@@ -5,6 +5,7 @@
 
 bool process_monitor_init(void);
 bool process_monitor_is_running(const char* process_name);
+bool process_monitor_is_system_process(const char* process_name);
 int  process_monitor_list_running(char names[][64], int max_names);
 void process_monitor_poll(void);
 

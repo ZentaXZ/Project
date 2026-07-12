@@ -2,7 +2,9 @@
 #include "schedule.h"
 #include "process_monitor.h"
 #include "reward_timer.h"
+#include "usage_limits.h"
 #include <string.h>
+#include <time.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -60,6 +62,14 @@ bool app_blocker_is_blocked_now(const char* process_name) {
         return false;
     }
 
+    if (usage_limits_has_active_session(process_name)) {
+        return false;
+    }
+
+    if (usage_limits_is_blocked(process_name)) {
+        return true;
+    }
+
     return !schedule_is_allowed_now(process_name);
 }
 
@@ -81,6 +91,39 @@ void app_blocker_enforce(void) {
 
         if (process_monitor_is_running(rule.process_name)) {
             app_blocker_terminate(rule.process_name);
+        }
+    }
+
+    int daily_count = usage_limits_get_daily_rule_count();
+    for (int i = 0; i < daily_count; i++) {
+        DailyLimitRule rule;
+        if (!usage_limits_get_daily_rule(i, &rule)) {
+            continue;
+        }
+
+        if (!usage_limits_is_daily_exceeded(rule.process_name)) {
+            continue;
+        }
+
+        if (process_monitor_is_running(rule.process_name)) {
+            app_blocker_terminate(rule.process_name);
+        }
+    }
+
+    int session_count = usage_limits_get_session_count();
+    for (int i = 0; i < session_count; i++) {
+        const char* process_name = NULL;
+        time_t ends_at = 0;
+        if (!usage_limits_get_session_info(i, &process_name, &ends_at)) {
+            continue;
+        }
+
+        if (ends_at > time(NULL)) {
+            continue;
+        }
+
+        if (process_monitor_is_running(process_name)) {
+            app_blocker_terminate(process_name);
         }
     }
 }

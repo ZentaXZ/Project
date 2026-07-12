@@ -3,28 +3,33 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -g $(shell pkg-config --cflags gtk4)
-LDFLAGS = $(shell pkg-config --libs gtk4) -lpsapi -luser32 -lkernel32 -lwinmm
+LDFLAGS = $(shell pkg-config --libs gtk4) -lpsapi -luser32 -lkernel32 -lwinmm -lm
 
 TARGET = gestor-tareas.exe
+WATCHDOG_TARGET = watchdog.exe
 
 # wildcard con /**/ no funciona en GNU Make para subcarpetas recursivas,
 # por eso se usa una función recursiva explícita
 rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 
-SOURCES = $(call rwildcard,src/,*.c) third_party/cJSON/cJSON.c
+SOURCES = $(filter-out src/watchdog/watchdog_main.c,$(call rwildcard,src/,*.c)) third_party/cJSON/cJSON.c
 OBJECTS = $(SOURCES:.c=.o)
 
-all: $(TARGET)
+all: $(TARGET) $(WATCHDOG_TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	@echo "Build successful: $(TARGET)"
 
+$(WATCHDOG_TARGET): src/watchdog/watchdog_main.c
+	$(CC) -Wall -Wextra -std=c11 -g -o $@ $< -lkernel32 -lshell32
+	@echo "Build successful: $(WATCHDOG_TARGET)"
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -f $(OBJECTS) $(TARGET) $(WATCHDOG_TARGET)
 	@echo "Clean complete"
 
 run: $(TARGET)

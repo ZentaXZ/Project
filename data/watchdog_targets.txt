@@ -1,0 +1,2 @@
+gestor-tareas.exe|gestor-tareas.exe
+StayFree.exe|C:\Program Files\WindowsApps\37081StayFreeApps.StayFree3_3.4.2.0_x64__fqhk48m1tsma0\app\StayFree.exe

@@ -195,3 +195,41 @@ bool task_storage_append_completed(const char* task_id, const char* task_title, 
     cJSON_Delete(root);
     return result;
 }
+
+bool task_storage_remove_completed(const char* task_id) {
+    if (!task_id || task_id[0] == '\0') {
+        return false;
+    }
+
+    cJSON* root = json_utils_load_file("data/completed_tasks.json");
+    if (!root) {
+        return false;
+    }
+
+    cJSON* completed_array = cJSON_GetObjectItem(root, "completed");
+    if (!cJSON_IsArray(completed_array)) {
+        cJSON_Delete(root);
+        return false;
+    }
+
+    bool removed = false;
+    int count = cJSON_GetArraySize(completed_array);
+    for (int i = count - 1; i >= 0; i--) {
+        cJSON* item = cJSON_GetArrayItem(completed_array, i);
+        cJSON* id = cJSON_GetObjectItem(item, "id");
+        if (id && id->valuestring && strcmp(id->valuestring, task_id) == 0) {
+            cJSON_DeleteItemFromArray(completed_array, i);
+            removed = true;
+            break;
+        }
+    }
+
+    if (!removed) {
+        cJSON_Delete(root);
+        return false;
+    }
+
+    bool result = json_utils_save_file("data/completed_tasks.json", root);
+    cJSON_Delete(root);
+    return result;
+}

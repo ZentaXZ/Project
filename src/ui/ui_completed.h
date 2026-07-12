@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 
 /**
- * Build the read-only completed tasks view.
+ * Build the completed tasks view with delete support.
  */
 GtkWidget* ui_completed_build(void);
 

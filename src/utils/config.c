@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#define CONFIG_STAYFREE_PATH_MAX 512
+#define CONFIG_STAYFREE_DEFAULT_PATH \
+    "C:\\Program Files\\WindowsApps\\37081StayFreeApps.StayFree3_3.4.2.0_x64__fqhk48m1tsma0\\app\\StayFree.exe"
+
 typedef struct {
     int reward_minutes_per_task;
     int base_reward_minutes_per_task;
@@ -10,6 +14,9 @@ typedef struct {
     double punishment_multiplier;
     char theme[16];
     bool punishment_applied_today;
+    bool watchdog_enabled;
+    bool close_guard_enabled;
+    char stayfree_exe_path[CONFIG_STAYFREE_PATH_MAX];
 } Config;
 
 static Config g_config = {
@@ -18,7 +25,10 @@ static Config g_config = {
     .sound_enabled = true,
     .punishment_multiplier = 0.5,
     .theme = "light",
-    .punishment_applied_today = false
+    .punishment_applied_today = false,
+    .watchdog_enabled = true,
+    .close_guard_enabled = true,
+    .stayfree_exe_path = CONFIG_STAYFREE_DEFAULT_PATH
 };
 
 bool config_load(void) {
@@ -48,6 +58,22 @@ bool config_load(void) {
         strncpy(g_config.theme, theme->valuestring, sizeof(g_config.theme) - 1);
     }
 
+    cJSON* watchdog = cJSON_GetObjectItem(root, "watchdog_enabled");
+    if (watchdog && cJSON_IsBool(watchdog)) {
+        g_config.watchdog_enabled = cJSON_IsTrue(watchdog);
+    }
+
+    cJSON* close_guard = cJSON_GetObjectItem(root, "close_guard_enabled");
+    if (close_guard && cJSON_IsBool(close_guard)) {
+        g_config.close_guard_enabled = cJSON_IsTrue(close_guard);
+    }
+
+    cJSON* stayfree_path = cJSON_GetObjectItem(root, "stayfree_exe_path");
+    if (stayfree_path && stayfree_path->valuestring && stayfree_path->valuestring[0] != '\0') {
+        strncpy(g_config.stayfree_exe_path, stayfree_path->valuestring,
+                sizeof(g_config.stayfree_exe_path) - 1);
+    }
+
     cJSON_Delete(root);
     g_config.punishment_applied_today = false;
     return true;
@@ -59,6 +85,9 @@ bool config_save(void) {
     cJSON_AddStringToObject(root, "theme", g_config.theme);
     cJSON_AddBoolToObject(root, "sound_enabled", g_config.sound_enabled);
     cJSON_AddNumberToObject(root, "punishment_multiplier", g_config.punishment_multiplier);
+    cJSON_AddBoolToObject(root, "watchdog_enabled", g_config.watchdog_enabled);
+    cJSON_AddBoolToObject(root, "close_guard_enabled", g_config.close_guard_enabled);
+    cJSON_AddStringToObject(root, "stayfree_exe_path", g_config.stayfree_exe_path);
 
     bool ok = json_utils_save_file("data/config.json", root);
     cJSON_Delete(root);
@@ -105,4 +134,32 @@ void config_apply_punishment_today(void) {
            g_config.reward_minutes_per_task,
            g_config.base_reward_minutes_per_task,
            g_config.punishment_multiplier);
+}
+
+bool config_get_watchdog_enabled(void) {
+    return g_config.watchdog_enabled;
+}
+
+void config_set_watchdog_enabled(bool enabled) {
+    g_config.watchdog_enabled = enabled;
+}
+
+bool config_get_close_guard_enabled(void) {
+    return g_config.close_guard_enabled;
+}
+
+void config_set_close_guard_enabled(bool enabled) {
+    g_config.close_guard_enabled = enabled;
+}
+
+const char* config_get_stayfree_exe_path(void) {
+    return g_config.stayfree_exe_path;
+}
+
+void config_set_stayfree_exe_path(const char* path) {
+    if (!path) {
+        return;
+    }
+    strncpy(g_config.stayfree_exe_path, path, sizeof(g_config.stayfree_exe_path) - 1);
+    g_config.stayfree_exe_path[sizeof(g_config.stayfree_exe_path) - 1] = '\0';
 }

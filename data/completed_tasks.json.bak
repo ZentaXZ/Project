@@ -1,33 +1,28 @@
 {
-	"tasks":	[{
-			"id":	"6a53b76e-0000-0001-04e8-0000510a6a7f",
-			"title":	"Tarea de prueba UI",
-			"description":	"",
-			"completed":	true
-		}, {
+	"completed":	[{
 			"id":	"6a53bbe4-0000-0001-516d-000007760ab3",
 			"title":	"hhgfy",
-			"description":	"",
-			"completed":	true
+			"type":	"normal",
+			"completed_at":	"2026-07-12T18:08:06"
 		}, {
 			"id":	"6a53bee4-0000-0001-062f-0000592e3cea",
 			"title":	"Test reward",
-			"description":	"",
-			"completed":	true
+			"type":	"normal",
+			"completed_at":	"2026-07-12T18:20:52"
 		}, {
 			"id":	"6a53c73f-0000-0001-1fdf-00006c9b29fd",
 			"title":	"Test correccion alcance",
-			"description":	"",
-			"completed":	true
+			"type":	"normal",
+			"completed_at":	"2026-07-12T18:56:31"
 		}, {
 			"id":	"6a53c7ab-0000-0001-09c1-000020292af0",
 			"title":	"szf",
-			"description":	"",
-			"completed":	true
+			"type":	"normal",
+			"completed_at":	"2026-07-12T18:58:21"
 		}, {
 			"id":	"6a53c8b1-0000-0001-67ae-000028406c51",
 			"title":	"hfrt",
-			"description":	"",
-			"completed":	true
+			"type":	"normal",
+			"completed_at":	"2026-07-12T19:02:42"
 		}]
 }

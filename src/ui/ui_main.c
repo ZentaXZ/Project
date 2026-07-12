@@ -3,11 +3,17 @@
 #include "ui_completed.h"
 #include "ui_stats.h"
 #include "ui_settings.h"
+#include "close_guard.h"
 #include <string.h>
+
+/* Tamaño fijo: el layout de Configuración y las pestañas se diseñaron para estas dimensiones. */
+#define UI_WINDOW_WIDTH  960
+#define UI_WINDOW_HEIGHT 640
 
 typedef struct {
     GtkWidget* completed_view;
     GtkWidget* stats_view;
+    GtkWidget* settings_view;
 } MainWindowContext;
 
 static void ui_main_on_stack_visible_child_changed(GObject* object, GParamSpec* pspec, gpointer user_data) {
@@ -22,8 +28,16 @@ static void ui_main_on_stack_visible_child_changed(GObject* object, GParamSpec* 
 
     if (strcmp(name, "completed") == 0) {
         ui_completed_refresh(ctx->completed_view);
+        ui_settings_stop_live_refresh(ctx->settings_view);
     } else if (strcmp(name, "stats") == 0) {
         ui_stats_refresh(ctx->stats_view);
+        ui_settings_stop_live_refresh(ctx->settings_view);
+    } else if (strcmp(name, "settings") == 0) {
+        ui_settings_refresh_apps(ctx->settings_view);
+        ui_settings_refresh_rules(ctx->settings_view);
+        ui_settings_start_live_refresh(ctx->settings_view);
+    } else {
+        ui_settings_stop_live_refresh(ctx->settings_view);
     }
 }
 
@@ -42,9 +56,11 @@ GtkWidget* ui_main_build(GtkApplication* app) {
 
     ctx->completed_view = completed_view;
     ctx->stats_view = stats_view;
+    ctx->settings_view = settings_view;
 
     gtk_window_set_title(GTK_WINDOW(window), "Gestor de Tareas");
-    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+    gtk_window_set_default_size(GTK_WINDOW(window), UI_WINDOW_WIDTH, UI_WINDOW_HEIGHT);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
     gtk_stack_switcher_set_stack(GTK_STACK_SWITCHER(switcher), GTK_STACK(stack));
     gtk_stack_add_titled(GTK_STACK(stack), tasks_view, "tasks", "Tareas");
@@ -62,6 +78,8 @@ GtkWidget* ui_main_build(GtkApplication* app) {
     g_object_set_data_full(G_OBJECT(window), "main-window-ctx-free", ctx, g_free);
 
     g_signal_connect(stack, "notify::visible-child", G_CALLBACK(ui_main_on_stack_visible_child_changed), ctx);
+
+    close_guard_attach(GTK_WINDOW(window));
 
     return window;
 }
