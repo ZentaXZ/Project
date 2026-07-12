@@ -28,7 +28,12 @@ SRC = src/main.c \
 OBJ = $(SRC:.c=.o)
 TARGET = gestor-tareas.exe
 
-all: $(TARGET)
+all: setup-check $(TARGET)
+
+setup-check:
+	@echo "Checking for GTK4..."
+	@$(PKG_CONFIG) --exists gtk4 || (echo "ERROR: GTK4 not found. Install with: pacman -S mingw-w64-x86_64-gtk4" && exit 1)
+	@echo "✓ GTK4 found"
 
 $(TARGET): $(OBJ)
 	@echo "Linking $@..."
@@ -47,4 +52,4 @@ clean:
 run: $(TARGET)
 	./$(TARGET)
 
-.PHONY: all clean run
+.PHONY: all clean run setup-check
